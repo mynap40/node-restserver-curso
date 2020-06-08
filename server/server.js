@@ -1,8 +1,13 @@
 require('./config/config')
 
+
 const express = require('express')
+const mongoose = require('mongoose')
+
 const app = express()
 const bodyParser = require('body-parser')
+
+
 
 // parse application/x-www-form-urlencoded
 // app.use son también midlewares, que se ejecutarán cada ver que hagamos una petición
@@ -10,39 +15,13 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
+app.use(require('./routes/usuario'));
 
-app.get('/usuario', function(req, res) {
-    res.json('get usuario')
-});
+// Añado { useNewUrlParser: true, useCreateIndex: true }, para que desaparezca el warning de deprecated
+mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, req) => {
+    if (err) throw err;
 
-app.post('/usuario', function(req, res) {
-    let body = req.body;
-
-    if (body.nombre === undefined) {
-
-        res.status(400).json({
-            ok: false,
-            mensaje: 'El nombre es necesario'
-        });
-
-    } else {
-        res.json({
-            persona: body
-        })
-    }
-
-});
-
-app.put('/usuario/:id', function(req, res) {
-    let id = req.params.id; // params.id === :id
-
-    res.json({
-        id
-    })
-});
-
-app.delete('/usuario', function(req, res) {
-    res.json('delete usuario')
+    console.log('Base de datos ONLINE')
 });
 
 app.listen(process.env.PORT, () => {
