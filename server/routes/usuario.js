@@ -6,7 +6,18 @@ const bcrypt = require('bcrypt');
 // Es una librería que extiende muchas cosas funcionalidades que Javascript tendría que tener por defecto. Lo usaremos para eliminar campos del objecto body a la hora de actualizar con PUT.
 const _ = require('underscore')
 
-app.get('/usuario', function(req, res) {
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion')
+
+// Antes del uso de middlewares
+//app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, (req, res) => {
+
+    // Como tenemos toda la información del usuario, podemos usarlo
+    /*    return res.json({
+            usuario: req.usuario,
+            nombre: req.usuario.nombre,
+            email: req.usuario.email
+        })*/
 
     let desde = req.query.desde || 0; // Si viene el parámetro desde lo uso y si no busco desde la página 0
     desde = Number(desde); // Lo transformamos en número
@@ -39,7 +50,8 @@ app.get('/usuario', function(req, res) {
         })
 });
 
-app.post('/usuario', function(req, res) {
+//app.post('/usuario', function(req, res) {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
@@ -82,7 +94,8 @@ app.post('/usuario', function(req, res) {
 
 });
 
-app.put('/usuario/:id', function(req, res) {
+//app.put('/usuario/:id', function(req, res) {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
     let id = req.params.id; // params.id === :id
 
     // Sólo nos quedamos con los campos que sí se deberían actualizar.
@@ -108,7 +121,8 @@ app.put('/usuario/:id', function(req, res) {
 
 });
 
-app.delete('/usuario/:id', function(req, res) {
+//app.delete('/usuario/:id', function(req, res) {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
     let id = req.params.id;
 
     //    Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {

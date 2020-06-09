@@ -15,7 +15,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 // parse application/json
 app.use(bodyParser.json())
-app.use(require('./routes/usuario'));
+
+// Configuración global de rutas
+app.use(require('./routes/index'));
 
 // Añado { useNewUrlParser: true, useCreateIndex: true }, para que desaparezca el warning de deprecated
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useCreateIndex: true }, (err, req) => {
